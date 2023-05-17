@@ -17,15 +17,10 @@ function getData() {
     //leer token desde local storage
     const accessToken = window.localStorage.getItem('accessToken');
 
-    console.log(' aaaa '+accessToken);
-
-    return;
-
-
     //obtengo los datos desde el API
     var myHeaders = new Headers();
     myHeaders.append("x-api-key", x_api_key);
-    myHeaders.append("authorization", "Bearer <YOUR_ACCESS_TOKEN>");
+    myHeaders.append("authorization", `Bearer ${accessToken}`);
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
@@ -37,21 +32,32 @@ function getData() {
     var requestOptions = {
         method: 'GET',
         headers: myHeaders,
-        body: raw,
+        // body: raw,
         redirect: 'follow'
     };
 
-    fetch("https://backend.ducapp.net/api/private/transactions?skip=0&limit=10", requestOptions)
+    fetch(`{$base_url}/api/private/transactions?skip=0&limit=100`, requestOptions)
         .then(response => response.text())
-        .then(result => console.log(result))
+        .then(result => {
+            const datos = JSON.parse(result);
+
+
+            new gridjs.Grid({
+                columns: ["transactionAmount", "transactionStatus", "currency", "type" , "concept", "transactionID" ,  "id"],
+                data: datos
+              }).render(document.getElementById("container-listtr"));
+
+
+
+            console.log(datos);
+
+        } )
         .catch(error => console.log('error', error));
 
 
 
 
-    // fetch('https://jsonplaceholder.typicode.com/todos/1')
-    //   .then(response => response.json())
-    //   .then(json => console.log(json));
+   
 
     /*
           new gridjs.Grid({
@@ -66,6 +72,7 @@ function getData() {
           }).render(document.getElementById("wrapper"));
           */
 
+          /*
     new gridjs.Grid({
         columns: ['Name', 'Language', 'Released At', 'Artist'],
         pagination: true,
@@ -75,20 +82,9 @@ function getData() {
             then: data => data.data.map(card => [card.name, card.lang, card.released_at, card.artist])
         }
     }).render(document.getElementById("container-listtr"));;
+    */
 
-    /*   
-     fetch('https://jsonplaceholder.typicode.com/posts', {
-         method: 'POST'
-     }).then(function (response) {
-         if (response.ok) {
-             return response.json();
-         }
-         return Promise.reject(response);
-     }).then(function (data) {
-         console.log(data);
-     }).catch(function (error) {
-         console.warn('Something went wrong.', error);
-     });*/
+    
 
 }
 

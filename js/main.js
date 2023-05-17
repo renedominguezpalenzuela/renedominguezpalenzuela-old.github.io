@@ -103,6 +103,84 @@ function getAPIStatus() {
 //-------------------------------------------------------------------------------
 
 function login() {
+  //leyendo datos del formulario
+  const usr = document.getElementById("usr").value;
+  const pass = document.getElementById("pass").value;
+
+
+  const config = {
+    headers:{
+      "x-api-key": x_api_key,
+      "Content-Type" : "application/json"
+    }
+  };
+
+
+  
+  const datos = { "email" : usr, "password" : pass };
+
+  console.log(datos);
+
+ 
+  axios.post(`${base_url}/api/auth/login`, datos, config)
+    .then(response => {
+      const datos = response.data;
+      console.log(datos)
+
+      
+      if (datos.accessToken) {
+        console.log(datos.accessToken);
+        window.localStorage.setItem('accessToken', datos.accessToken)
+       // window.location.assign("listatr.html");
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Login error',
+          text: 'Check your credential data',
+          footer: '<div>Press "Set Test Data" Button to get Test User credentials</div>'
+
+        });
+      }
+      
+
+
+
+
+
+
+    })
+    .catch(error => {
+      console.log('Login Error ');
+      console.error( error.response);
+
+      if (error.response) {
+
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.error + ' code ' + error.response.data.statusCode,
+          text: error.response.data.message,
+         
+  
+        })
+
+      } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong in login process',
+        footer: '<h5> Inspect console for details </h5>'
+
+      })
+    }
+
+    });
+
+
+
+
+}
+
+function loginWidthFetch() {
 
 
 
@@ -160,92 +238,7 @@ function login() {
     })
     .catch(error => console.log('error', error));
 
-  return;
-  //-----------------------
-  const config = `{
-    headers:{
-      "x-api-key": ${x_api_key},
-      "Content-Type" : "application/json"
-    }
-  }`;
 
 
-  /*var myHeaders = new Headers();
-  myHeaders.append("x-api-key", x_api_key);
-  myHeaders.append("Content-Type", "application/json");
-
-  */
-
-  // var raw = JSON.stringify({
-  //   "email": "john.doe@test.ducapp.net",
-  //   "password": "$2y$10$EiZYJxdFvdTBfY97uTfU1e11U5vAFmxTnAQ5M.d0q8zU9"
-  // });
-
-  const datos = `{ "email" : ${usr}, "password" : ${pass} }`;
-  console.log(datos);
-
-  // var requestOptions = {
-  //   method: 'POST',
-  //   headers: myHeaders,
-  //   body: raw,
-  //   redirect: 'follow'
-  // };
-
-  // fetch("https://backend.ducapp.net/api/auth/login", requestOptions)
-  //   .then(response => response.text())
-  //   .then(result => console.log(result))
-  //   .catch(error => console.log('error', error));
-
-
-
-
-
-
-
-  axios.post(`${base_url}/api/auth/login`, datos, config)
-    .then(response => {
-      const datos = response.data;
-      console.log(`API Status`, datos);
-
-
-
-
-    })
-    .catch(error => {
-      console.error(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong in login process',
-        footer: '<h5> Inspect console for details </h5>'
-
-      })
-
-    });
-
-
-
-
-  // fetch(`${base_url}/api/health`, {
-  //   method: 'POST'
-  // }).then(function (response) {
-  //   if (response.ok) {
-  //     return response.json();
-  //   }
-  //   return Promise.reject(response);
-
-  // }).then(function (data) {
-  //   console.log(data);
-  // }).catch(function (error) {
-  //   console.warn('Something went wrong in login.', error);
-  //   Swal.fire({
-  //     icon: 'error',
-  //     title: 'Oops...',
-  //     text: 'Something went wrong in login process!',
-  //     footer: '<h5> Inspect console for details </h5>'
-  //     //  footer: `<h5 >${error}</h5>`
-  //   })
-
-  // });
 
 }
