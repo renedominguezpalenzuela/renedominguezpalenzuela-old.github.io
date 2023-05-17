@@ -58,7 +58,7 @@ function initializing() {
 //-------------------------------------------------------------------------------
 function getAPIStatus() {
 
-  axios.get(`${base_url}/api/healthss`)
+  axios.get(`${base_url}/api/health`)
     .then(response => {
       const api_status = response.data.status;
       console.log(`API Status`, api_status);
@@ -96,61 +96,147 @@ function getAPIStatus() {
 function login() {
 
 
-  window.location.replace("listatr.html");
+ 
+
+  //leyendo datos del formulario
+  const usr = document.getElementById("usr").value;
+  const pass = document.getElementById("pass").value;
+
+
+
+  var myHeaders = new Headers();
+  myHeaders.append("x-api-key", x_api_key);
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "email": usr,
+    "password": pass
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch("https://backend.ducapp.net/api/auth/login", requestOptions)
+    .then(response => response.text())
+        .then(result => {
+          const datos = JSON.parse(result);
+
+          if (datos.accessToken) {
+             console.log(datos.accessToken);
+             window.location.assign("listatr.html");
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Login error',
+              text: 'Check your credential data',
+              footer: '<div>Press "Set Test Data" Button to get Test User credentials</div>'
+      
+            })
+          }
+         /* } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Login error',
+              text: 'Check your credential data'
+      
+            })
+
+          }*/
+          
+        })
+        .catch(error => console.log('error', error));
 
   return;
+  //-----------------------
+  const config = `{
+    headers:{
+      "x-api-key": ${x_api_key},
+      "Content-Type" : "application/json"
+    }
+  }`;
 
-  axios.post(`${base_url}/api/healthss`)
-  .then(response => {
-    const api_status = response.data.status;
-    console.log(`API Status`, api_status);
 
-    Swal.fire({
-      icon: api_status ? 'info' : 'error',
-      title: 'API Status: ',
-      text: api_status ? 'API is UP and runnig OK' : 'API is Down',
-      footer: `<h5>Base URL: ${base_url}</h5>`
+  /*var myHeaders = new Headers();
+  myHeaders.append("x-api-key", x_api_key);
+  myHeaders.append("Content-Type", "application/json");
+
+  */
+
+  // var raw = JSON.stringify({
+  //   "email": "john.doe@test.ducapp.net",
+  //   "password": "$2y$10$EiZYJxdFvdTBfY97uTfU1e11U5vAFmxTnAQ5M.d0q8zU9"
+  // });
+
+  const datos = `{ "email" : ${usr}, "password" : ${pass} }`;
+  console.log(datos);
+
+  // var requestOptions = {
+  //   method: 'POST',
+  //   headers: myHeaders,
+  //   body: raw,
+  //   redirect: 'follow'
+  // };
+
+  // fetch("https://backend.ducapp.net/api/auth/login", requestOptions)
+  //   .then(response => response.text())
+  //   .then(result => console.log(result))
+  //   .catch(error => console.log('error', error));
+
+
+
+
+
+
+
+  axios.post(`${base_url}/api/auth/login`, datos, config)
+    .then(response => {
+      const datos = response.data;
+      console.log(`API Status`, datos);
+
+
+
+
+    })
+    .catch(error => {
+      console.error(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong in login process',
+        footer: '<h5> Inspect console for details </h5>'
+
+      })
 
     });
 
 
-  })
-  .catch(error => {
-    console.error(error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Something went wrong requesting API Status',
-      footer: '<h5> Inspect console for details </h5>'
-
-    })
-
-  });
 
 
+  // fetch(`${base_url}/api/health`, {
+  //   method: 'POST'
+  // }).then(function (response) {
+  //   if (response.ok) {
+  //     return response.json();
+  //   }
+  //   return Promise.reject(response);
 
+  // }).then(function (data) {
+  //   console.log(data);
+  // }).catch(function (error) {
+  //   console.warn('Something went wrong in login.', error);
+  //   Swal.fire({
+  //     icon: 'error',
+  //     title: 'Oops...',
+  //     text: 'Something went wrong in login process!',
+  //     footer: '<h5> Inspect console for details </h5>'
+  //     //  footer: `<h5 >${error}</h5>`
+  //   })
 
-  fetch(`${base_url}/api/health`, {
-    method: 'POST'
-  }).then(function (response) {
-    if (response.ok) {
-      return response.json();
-    }
-    return Promise.reject(response);
-
-  }).then(function (data) {
-    console.log(data);
-  }).catch(function (error) {
-    console.warn('Something went wrong in login.', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Something went wrong in login process!',
-      footer: '<h5> Inspect console for details </h5>'
-      //  footer: `<h5 >${error}</h5>`
-    })
-
-  });
+  // });
 
 }
 
