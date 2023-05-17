@@ -26,28 +26,37 @@ function setTestData() {
 //-------------------------------------------------------------------------------
 function initializing() {
 
+
+
   //Boton de login
   let btn = document.getElementById('login-btn');
-  btn.addEventListener('click', () => {
-    console.log('login process');
-    login();
-  });
+  if (btn) {
+    btn.addEventListener('click', () => {
+      console.log('login process');
+      login();
+    });
+  }
 
 
   //Boton setea datos de prueba
   let test_data_btn = document.getElementById('test-data-btn');
-  test_data_btn.addEventListener('click', () => {
-    setTestData();
-    console.log('test data');
-  });
+  if (test_data_btn) {
+
+    test_data_btn.addEventListener('click', () => {
+      setTestData();
+      console.log('test data');
+    });
+  }
 
   //Boton Test API
   let test_api_btn = document.getElementById('test-api-btn');
-  test_api_btn.addEventListener('click', () => {
-    console.log('test api');
-    getAPIStatus();
+  if (test_api_btn) {
+    test_api_btn.addEventListener('click', () => {
+      console.log('test api');
+      getAPIStatus();
 
-  });
+    });
+  }
 
 
 }
@@ -90,13 +99,13 @@ function getAPIStatus() {
 
 
 //-------------------------------------------------------------------------------
-//  Solicitar estado del API
+//  Login
 //-------------------------------------------------------------------------------
 
 function login() {
 
 
- 
+
 
   //leyendo datos del formulario
   const usr = document.getElementById("usr").value;
@@ -122,33 +131,34 @@ function login() {
 
   fetch("https://backend.ducapp.net/api/auth/login", requestOptions)
     .then(response => response.text())
-        .then(result => {
-          const datos = JSON.parse(result);
+    .then(result => {
+      const datos = JSON.parse(result);
 
-          if (datos.accessToken) {
-             console.log(datos.accessToken);
-             window.location.assign("listatr.html");
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Login error',
-              text: 'Check your credential data',
-              footer: '<div>Press "Set Test Data" Button to get Test User credentials</div>'
-      
-            })
-          }
-         /* } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Login error',
-              text: 'Check your credential data'
-      
-            })
+      if (datos.accessToken) {
+        console.log(datos.accessToken);
+        window.localStorage.setItem('accessToken', datos.accessToken)
+        window.location.assign("listatr.html");
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Login error',
+          text: 'Check your credential data',
+          footer: '<div>Press "Set Test Data" Button to get Test User credentials</div>'
 
-          }*/
-          
         })
-        .catch(error => console.log('error', error));
+      }
+      /* } else {
+         Swal.fire({
+           icon: 'error',
+           title: 'Login error',
+           text: 'Check your credential data'
+   
+         })
+
+       }*/
+
+    })
+    .catch(error => console.log('error', error));
 
   return;
   //-----------------------
@@ -237,53 +247,5 @@ function login() {
   //   })
 
   // });
-
-}
-
-function getData() {
-
-
-  return;
-
-  // fetch('https://jsonplaceholder.typicode.com/todos/1')
-  //   .then(response => response.json())
-  //   .then(json => console.log(json));
-
-  /*
-        new gridjs.Grid({
-          columns: ["Name", "Email", "Phone Number"],
-          data: [
-            ["John", "john@example.com", "(353) 01 222 3333"],
-            ["Mark", "mark@gmail.com", "(01) 22 888 4444"],
-            ["Eoin", "eoin@gmail.com", "0097 22 654 00033"],
-            ["Sarah", "sarahcdd@gmail.com", "+322 876 1233"],
-            ["Afshin", "afshin@mail.com", "(353) 22 87 8356"]
-          ]
-        }).render(document.getElementById("wrapper"));
-        */
-
-  new gridjs.Grid({
-    columns: ['Name', 'Language', 'Released At', 'Artist'],
-    pagination: true,
-    search: true,
-    server: {
-      url: 'https://api.scryfall.com/cards/search?q=Inspiring',
-      then: data => data.data.map(card => [card.name, card.lang, card.released_at, card.artist])
-    }
-  }).render(document.getElementById("wrapper"));;
-
-  /*   
-   fetch('https://jsonplaceholder.typicode.com/posts', {
-       method: 'POST'
-   }).then(function (response) {
-       if (response.ok) {
-           return response.json();
-       }
-       return Promise.reject(response);
-   }).then(function (data) {
-       console.log(data);
-   }).catch(function (error) {
-       console.warn('Something went wrong.', error);
-   });*/
 
 }
