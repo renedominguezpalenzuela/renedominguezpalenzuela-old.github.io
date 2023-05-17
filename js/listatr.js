@@ -10,9 +10,68 @@
 const base_url = 'https://backend.ducapp.net';
 const x_api_key = 'test.c6f50414-cc7f-5f00-bbb5-2d4eb771c41a';
 
+async function getData(){
+
+     //leer token desde local storage
+     const accessToken = window.localStorage.getItem('accessToken');
+
+     
+  const config = {
+    headers:{
+      "x-api-key": x_api_key,
+      "Content-Type" : "application/json",
+      "authorization" : `Bearer ${accessToken}`
+    }
+  };
 
 
-function getData() {
+  
+  const datos = { 
+    "filter": {
+        "status": "queued"
+    }
+   };
+
+
+   
+  axios.get(`{$base_url}/api/private/transactions?skip=0&limit=100`,  config)
+  .then(response => {
+    const datos = response.data;
+    console.log(datos)
+
+
+   
+
+  })
+  .catch(error => {
+    console.log('Login Error ');
+   
+
+    if (error.response) {
+        console.error(error.response);
+      Swal.fire({
+        icon: 'error',
+        title: error.response.data.error + ' code ' + error.response.data.statusCode,
+        text: error.response.data.message,
+      })
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong getting TR data',
+        footer: '<h5> Inspect console for details </h5>'
+
+      })
+    }
+
+  });
+
+
+
+
+}
+
+async function  getDataWithFetch() {
 
     //leer token desde local storage
     const accessToken = window.localStorage.getItem('accessToken');
@@ -32,8 +91,8 @@ function getData() {
     var requestOptions = {
         method: 'GET',
         headers: myHeaders,
-        // body: raw,
-        redirect: 'follow'
+        //  body: raw,
+        // redirect: 'follow'
     };
 
     fetch(`{$base_url}/api/private/transactions?skip=0&limit=100`, requestOptions)
@@ -92,16 +151,17 @@ function getData() {
 //-------------------------------------------------------------------------------
 //  Funcion que se ejecuta al cargar la pagina principal
 //-------------------------------------------------------------------------------
-function initializing() {
+async function initializing() {
 
     console.log("Initializanidd");
-    getData();
+    await getData();
+   //await getDataWithFetch();
 
     //Boton de login
-    // let btn = document.getElementById('login-btn');
-    // btn.addEventListener('click', () => {
-    //   console.log('login process');
-    //   login();
-    // });
+    let btn = document.getElementById('getdata-btn');
+    btn.addEventListener('click', async () => {
+      console.log('Get TR Data');
+      await getDataWithFetch();
+    });
 
 }

@@ -109,29 +109,29 @@ function login() {
 
 
   const config = {
-    headers:{
+    headers: {
       "x-api-key": x_api_key,
-      "Content-Type" : "application/json"
+      "Content-Type": "application/json"
     }
   };
 
 
-  
-  const datos = { "email" : usr, "password" : pass };
+
+  const datos = { "email": usr, "password": pass };
 
   console.log(datos);
 
- 
+
   axios.post(`${base_url}/api/auth/login`, datos, config)
     .then(response => {
       const datos = response.data;
       console.log(datos)
 
-      
+
       if (datos.accessToken) {
         console.log(datos.accessToken);
         window.localStorage.setItem('accessToken', datos.accessToken)
-       // window.location.assign("listatr.html");
+         window.location.assign("listatr.html");
       } else {
         Swal.fire({
           icon: 'error',
@@ -141,43 +141,26 @@ function login() {
 
         });
       }
-      
-
-
-
-
-
 
     })
     .catch(error => {
       console.log('Login Error ');
-      console.error( error.response);
-
       if (error.response) {
-
+        console.error(error.response);
         Swal.fire({
           icon: 'error',
           title: error.response.data.error + ' code ' + error.response.data.statusCode,
           text: error.response.data.message,
-         
-  
         })
-
       } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong in login process',
-        footer: '<h5> Inspect console for details </h5>'
-
-      })
-    }
-
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong in login process',
+          footer: '<h5> Inspect console for details </h5>'
+        })
+      }
     });
-
-
-
-
 }
 
 function loginWidthFetch() {
